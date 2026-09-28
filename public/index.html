@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICAI CA Articleship Work Diary — by Nakum Vishvarajsinh</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0D1B3E;color:#fff;min-height:100vh}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 40px;background:rgba(255,255,255,0.05);backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,0.1);position:sticky;top:0;z-index:100}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:42px;height:42px;background:linear-gradient(135deg,#0078D4,#005a9e);border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px}
+.logo-text{font-weight:800;font-size:18px}
+.logo-sub{font-size:11px;color:#7EB3D8;font-weight:400}
+.hero{text-align:center;padding:80px 40px 60px}
+.badge{display:inline-block;background:rgba(0,120,212,0.2);border:1px solid rgba(0,120,212,0.4);color:#7EB3D8;padding:6px 16px;border-radius:20px;font-size:12px;font-weight:600;margin-bottom:24px}
+h1{font-size:clamp(32px,5vw,56px);font-weight:900;line-height:1.15;margin-bottom:20px;background:linear-gradient(135deg,#fff 0%,#7EB3D8 100%);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.sub{font-size:18px;color:#A8C4D8;max-width:600px;margin:0 auto 40px;line-height:1.6}
+.btn-row{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:14px 32px;border-radius:12px;font-weight:700;font-size:15px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.2s}
+.btn-primary{background:linear-gradient(135deg,#0078D4,#005a9e);color:#fff;box-shadow:0 4px 20px rgba(0,120,212,0.4)}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(0,120,212,0.5)}
+.btn-outline{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2)}
+.btn-outline:hover{background:rgba(255,255,255,0.15)}
+.features{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:20px;max-width:1100px;margin:0 auto;padding:0 40px 80px}
+.card{background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:16px;padding:28px;transition:all 0.2s}
+.card:hover{background:rgba(255,255,255,0.08);transform:translateY(-4px)}
+.card-icon{font-size:32px;margin-bottom:16px}
+.card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.card p{font-size:14px;color:#A8C4D8;line-height:1.6}
+.section{max-width:900px;margin:0 auto;padding:0 40px 80px}
+.section h2{font-size:28px;font-weight:800;margin-bottom:32px;text-align:center}
+.steps{display:flex;flex-direction:column;gap:16px}
+.step{display:flex;align-items:flex-start;gap:20px;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:20px}
+.step-num{width:36px;height:36px;background:linear-gradient(135deg,#0078D4,#005a9e);border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;flex-shrink:0}
+.step-text h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.step-text p{font-size:13px;color:#A8C4D8}
+.footer{text-align:center;padding:40px;border-top:1px solid rgba(255,255,255,0.08);color:#7EB3D8;font-size:13px}
+.version-info{display:inline-flex;align-items:center;gap:8px;background:rgba(0,120,212,0.15);border:1px solid rgba(0,120,212,0.3);padding:8px 20px;border-radius:8px;font-size:13px;margin-bottom:20px}
+.green-dot{width:8px;height:8px;background:#4CAF50;border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.5}}
+</style>
+</head>
+<body>
+<nav class="nav">
+  <div class="logo">
+    <div class="logo-icon">CA</div>
+    <div>
+      <div class="logo-text">ICAI Diary</div>
+      <div class="logo-sub">Articleship Compliance System</div>
+    </div>
+  </div>
+  <a href="/admin" class="btn btn-outline" style="padding:10px 20px;font-size:13px">Admin Panel</a>
+</nav>
+
+<div class="hero">
+  <div class="badge">🎓 Free for All CA Articleship Students</div>
+  <h1>ICAI CA Articleship<br>Work Diary</h1>
+  <p class="sub">Complete digital diary for CA articleship training — Form 108, Leave Register (Reg. 59), Stipend Register (Reg. 48), Excel & PDF exports, AI-powered work logging.</p>
+  <div class="version-info"><span class="green-dot"></span><span id="ver-text">Checking latest version...</span></div>
+  <div class="btn-row">
+    <a href="#download" class="btn btn-primary" id="dl-btn">⬇ Download for Windows</a>
+    <a href="#features" class="btn btn-outline">📋 See Features</a>
+  </div>
+</div>
+
+<div class="features" id="features">
+  <div class="card"><div class="card-icon">📒</div><h3>Daily Work Diary (Form 108)</h3><p>Log every day's work with ICAI Annexure IV categories, client names, timings and descriptions. Auto-computes net hours.</p></div>
+  <div class="card"><div class="card-icon">📅</div><h3>Leave Register (Reg. 59)</h3><p>Track all leaves — casual, sick, exam, ICAI duty. Auto-calculates quota, balance, comp-off and excess leaves.</p></div>
+  <div class="card"><div class="card-icon">💰</div><h3>Stipend Register (Reg. 48)</h3><p>Record monthly stipend payments with proofs. Verifies compliance with ICAI minimum stipend requirements.</p></div>
+  <div class="card"><div class="card-icon">📊</div><h3>Excel & PDF Export</h3><p>Export beautiful formatted Excel (5 sheets) and PDF (colour-coded diary with all day types) for ICAI submission.</p></div>
+  <div class="card"><div class="card-icon">⚡</div><h3>Excel Bulk Import</h3><p>Import your existing monthly Excel diary files instantly. Detects leaves, holidays, client names automatically.</p></div>
+  <div class="card"><div class="card-icon">🤖</div><h3>AI Work Logger</h3><p>Describe your work in plain language — AI auto-fills ICAI categories, timings and professional descriptions using free Google Gemini API.</p></div>
+  <div class="card"><div class="card-icon">📈</div><h3>Weekly Hours Tracker</h3><p>Reg. 60 compliance — tracks 35h/week target, overtime, comp-off earned and deficit hours automatically.</p></div>
+  <div class="card"><div class="card-icon">🔄</div><h3>Auto Updates</h3><p>App notifies you when a new version is available. One-click download and update — always stay current.</p></div>
+</div>
+
+<div class="section" id="download">
+  <h2>⬇ Download & Install</h2>
+  <div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-text"><h4>Download the Installer</h4><p>Click the download button above. The file is approximately 85 MB (.exe installer for Windows).</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-text"><h4>Run the Installer</h4><p>Double-click <strong>ICAI-CA-Diary-Setup.exe</strong> → Click Install. The app installs like any normal Windows application.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-text"><h4>Register Your Account</h4><p>Open the app → Register with your name, email, SRN and firm details → Wait for admin approval (usually within 24 hours).</p></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-text"><h4>Start Your Diary</h4><p>Once approved, log in and start logging your daily articleship work. All data is saved locally on your PC.</p></div></div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>Created by <strong>Nakum Vishvarajsinh Ghanshyamsinh</strong> — SRN: WRO0863553 — T K Andharia &amp; Co, Bhavnagar, Gujarat</p>
+  <p style="margin-top:8px">Free software for ICAI CA Articleship Students • Not affiliated with ICAI</p>
+</div>
+
+<script>
+fetch('/api/updates/latest')
+  .then(r=>r.json())
+  .then(d=>{
+    document.getElementById('ver-text').textContent = 'Latest Version: v' + (d.latestVersion||'1.0.0');
+    if(d.downloadUrl) {
+      document.getElementById('dl-btn').href = d.downloadUrl;
+    }
+  }).catch(()=>{
+    document.getElementById('ver-text').textContent = 'Version: v1.0.0';
+  });
+</script>
+</body>
+</html>

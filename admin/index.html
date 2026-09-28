@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Panel — ICAI Diary Server</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh}
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+.login-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:40px;width:100%;max-width:400px}
+.login-card h1{font-size:22px;font-weight:800;margin-bottom:4px;color:#fff}
+.login-card p{color:#94a3b8;font-size:13px;margin-bottom:28px}
+input,select,textarea{width:100%;padding:10px 14px;background:#0f172a;border:1px solid #334155;border-radius:8px;color:#e2e8f0;font-size:14px;outline:none;transition:border-color 0.2s}
+input:focus,select:focus{border-color:#0078D4}
+label{display:block;font-size:12px;font-weight:600;color:#94a3b8;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px}
+.form-group{margin-bottom:16px}
+.btn{padding:10px 20px;border-radius:8px;font-weight:700;font-size:14px;cursor:pointer;border:none;transition:all 0.2s;display:inline-flex;align-items:center;gap:6px}
+.btn-primary{background:#0078D4;color:#fff}.btn-primary:hover{background:#0063b1}
+.btn-success{background:#16a34a;color:#fff}.btn-success:hover{background:#15803d}
+.btn-danger{background:#dc2626;color:#fff}.btn-danger:hover{background:#b91c1c}
+.btn-warning{background:#d97706;color:#fff}.btn-warning:hover{background:#b45309}
+.btn-ghost{background:rgba(255,255,255,0.08);color:#e2e8f0;border:1px solid #334155}.btn-ghost:hover{background:rgba(255,255,255,0.12)}
+.btn-sm{padding:5px 12px;font-size:12px}
+.btn-full{width:100%;justify-content:center}
+.app{display:none;flex-direction:column;min-height:100vh}
+.sidebar{width:220px;background:#1e293b;border-right:1px solid #334155;padding:20px 0;position:fixed;top:0;left:0;height:100vh;z-index:50}
+.sidebar-logo{padding:0 20px 20px;border-bottom:1px solid #334155;margin-bottom:16px}
+.sidebar-logo h2{font-size:15px;font-weight:800;color:#fff}
+.sidebar-logo p{font-size:11px;color:#64748b}
+.nav-item{display:flex;align-items:center;gap:10px;padding:10px 20px;cursor:pointer;font-size:13px;font-weight:500;color:#94a3b8;transition:all 0.15s;border-left:3px solid transparent}
+.nav-item:hover{background:rgba(255,255,255,0.05);color:#e2e8f0}
+.nav-item.active{background:rgba(0,120,212,0.15);color:#60a5fa;border-left-color:#0078D4}
+.main{margin-left:220px;flex:1;padding:24px}
+.page{display:none}.page.active{display:block}
+.page-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px}
+.page-header h1{font-size:22px;font-weight:800;color:#fff}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:#1e293b;border:1px solid #334155;border-radius:12px;padding:20px}
+.stat-card .label{font-size:11px;color:#64748b;text-transform:uppercase;font-weight:600;letter-spacing:0.5px}
+.stat-card .value{font-size:32px;font-weight:800;margin:4px 0;color:#fff}
+.stat-card .sub{font-size:12px;color:#94a3b8}
+.card{background:#1e293b;border:1px solid #334155;border-radius:12px;overflow:hidden;margin-bottom:20px}
+.card-header{padding:16px 20px;border-bottom:1px solid #334155;display:flex;align-items:center;justify-content:space-between}
+.card-header h3{font-size:15px;font-weight:700;color:#fff}
+.card-body{padding:20px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{text-align:left;padding:10px 12px;font-size:11px;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.5px;border-bottom:1px solid #334155;background:#0f172a}
+td{padding:10px 12px;border-bottom:1px solid #1e293b;color:#e2e8f0;vertical-align:middle}
+tr:hover td{background:rgba(255,255,255,0.03)}
+.badge{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;display:inline-block}
+.badge-pending{background:#78350f20;color:#fbbf24;border:1px solid #78350f}
+.badge-approved{background:#14532d20;color:#4ade80;border:1px solid #14532d}
+.badge-banned{background:#7f1d1d20;color:#f87171;border:1px solid #7f1d1d}
+.badge-rejected{background:#1e293b;color:#64748b;border:1px solid #334155}
+.search-bar{display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.search-bar input{max-width:300px}
+.search-bar select{max-width:160px}
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:20px}
+.modal.open{display:flex}
+.modal-card{background:#1e293b;border:1px solid #334155;border-radius:16px;padding:28px;width:100%;max-width:500px;max-height:90vh;overflow-y:auto}
+.modal-card h2{font-size:18px;font-weight:800;color:#fff;margin-bottom:20px}
+.alert{padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none}
+.alert-error{background:#7f1d1d30;border:1px solid #dc2626;color:#fca5a5}
+.alert-success{background:#14532d30;border:1px solid #16a34a;color:#86efac}
+.flex{display:flex}.gap-2{gap:8px}.items-center{align-items:center}.justify-between{justify-content:space-between}
+.text-muted{color:#64748b;font-size:12px}.text-white{color:#fff}.font-bold{font-weight:700}
+.mt-2{margin-top:8px}.mb-4{margin-bottom:16px}
+.log-item{padding:8px 0;border-bottom:1px solid #1e293b;font-size:12px}
+.log-item .action{font-weight:700;color:#60a5fa}
+.log-item .time{color:#64748b}
+.empty{text-align:center;padding:40px;color:#64748b}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="loginPage" class="login-wrap">
+  <div class="login-card">
+    <h1>🔐 Admin Panel</h1>
+    <p>ICAI CA Diary Server — Nakum Vishvarajsinh</p>
+    <div class="alert alert-error" id="loginErr"></div>
+    <div class="form-group"><label>Username</label><input id="adminUser" value="nakum_admin" placeholder="nakum_admin"/></div>
+    <div class="form-group"><label>Password</label><input id="adminPass" type="password" placeholder="Your admin password"/></div>
+    <button class="btn btn-primary btn-full" onclick="adminLogin()">Login to Admin Panel</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="app">
+  <div class="sidebar">
+    <div class="sidebar-logo">
+      <h2>ICAI Diary Admin</h2>
+      <p id="adminUserLabel">nakum_admin</p>
+    </div>
+    <div class="nav-item active" onclick="showPage('dashboard')">📊 Dashboard</div>
+    <div class="nav-item" onclick="showPage('pending')">⏳ Pending Approval</div>
+    <div class="nav-item" onclick="showPage('users')">👥 All Users</div>
+    <div class="nav-item" onclick="showPage('versions')">🚀 App Versions</div>
+    <div class="nav-item" onclick="showPage('logs')">📋 Activity Logs</div>
+    <div class="nav-item" onclick="showPage('settings')">⚙️ Settings</div>
+    <div class="nav-item" style="margin-top:auto;color:#f87171" onclick="logout()">🚪 Logout</div>
+  </div>
+  <div class="main">
+
+    <!-- DASHBOARD -->
+    <div id="page-dashboard" class="page active">
+      <div class="page-header"><h1>📊 Dashboard</h1><button class="btn btn-ghost btn-sm" onclick="loadDashboard()">↻ Refresh</button></div>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="label">Total Users</div><div class="value" id="st-total">—</div><div class="sub">Registered</div></div>
+        <div class="stat-card"><div class="label">Approved</div><div class="value" id="st-approved" style="color:#4ade80">—</div><div class="sub">Active users</div></div>
+        <div class="stat-card"><div class="label">Pending</div><div class="value" id="st-pending" style="color:#fbbf24">—</div><div class="sub">Awaiting approval</div></div>
+        <div class="stat-card"><div class="label">Banned</div><div class="value" id="st-banned" style="color:#f87171">—</div><div class="sub">Blocked</div></div>
+        <div class="stat-card"><div class="label">Today Logins</div><div class="value" id="st-today" style="color:#60a5fa">—</div><div class="sub">Login events</div></div>
+        <div class="stat-card"><div class="label">Active (7d)</div><div class="value" id="st-week" style="color:#a78bfa">—</div><div class="sub">Unique users</div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>⏳ Pending Approvals</h3><button class="btn btn-success btn-sm" onclick="bulkApprove()">✓ Approve All</button></div>
+        <div class="card-body"><div id="pendingList"><div class="empty">Loading...</div></div></div>
+      </div>
+      <div class="card">
+        <div class="card-header"><h3>📋 Recent Activity</h3></div>
+        <div class="card-body"><div id="recentLogs"><div class="empty">Loading...</div></div></div>
+      </div>
+    </div>
+
+    <!-- PENDING -->
+    <div id="page-pending" class="page">
+      <div class="page-header"><h1>⏳ Pending Approvals</h1><button class="btn btn-success btn-sm" onclick="bulkApprove()">✓ Approve All Pending</button></div>
+      <div class="card"><div class="card-body"><div id="pendingFull"><div class="empty">Loading...</div></div></div></div>
+    </div>
+
+    <!-- USERS -->
+    <div id="page-users" class="page">
+      <div class="page-header"><h1>👥 All Users</h1></div>
+      <div class="search-bar">
+        <input id="searchInput" placeholder="Search name, email, SRN, firm..." oninput="searchUsers()"/>
+        <select id="statusFilter" onchange="searchUsers()">
+          <option value="all">All Status</option>
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="banned">Banned</option>
+          <option value="rejected">Rejected</option>
+        </select>
+        <button class="btn btn-ghost btn-sm" onclick="loadUsers()">↻ Refresh</button>
+      </div>
+      <div class="card">
+        <div class="card-body" style="padding:0">
+          <table>
+            <thead><tr><th>Name / Email</th><th>SRN</th><th>Firm</th><th>City</th><th>Status</th><th>App Ver</th><th>Last Active</th><th>Actions</th></tr></thead>
+            <tbody id="usersTable"><tr><td colspan="8" class="empty">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VERSIONS -->
+    <div id="page-versions" class="page">
+      <div class="page-header"><h1>🚀 App Versions</h1><button class="btn btn-primary btn-sm" onclick="openVersionModal()">+ Publish New Version</button></div>
+      <div class="card"><div class="card-body" style="padding:0">
+        <table>
+          <thead><tr><th>Version</th><th>Status</th><th>Mandatory</th><th>File Size</th><th>Release Notes</th><th>Published</th><th>Actions</th></tr></thead>
+          <tbody id="versionsTable"><tr><td colspan="7" class="empty">Loading...</td></tr></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- LOGS -->
+    <div id="page-logs" class="page">
+      <div class="page-header"><h1>📋 Activity Logs</h1><button class="btn btn-ghost btn-sm" onclick="loadLogs()">↻ Refresh</button></div>
+      <div class="card"><div class="card-body" style="padding:0">
+        <table>
+          <thead><tr><th>Time</th><th>User</th><th>Action</th><th>Details</th><th>IP</th></tr></thead>
+          <tbody id="logsTable"><tr><td colspan="5" class="empty">Loading...</td></tr></tbody>
+        </table>
+      </div></div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="page-settings" class="page">
+      <div class="page-header"><h1>⚙️ Settings</h1></div>
+      <div class="card" style="max-width:500px">
+        <div class="card-header"><h3>Change Admin Password</h3></div>
+        <div class="card-body">
+          <div class="alert alert-success" id="pwSuccess"></div>
+          <div class="alert alert-error" id="pwError"></div>
+          <div class="form-group"><label>New Password</label><input type="password" id="newPw" placeholder="Min. 8 characters"/></div>
+          <div class="form-group"><label>Confirm Password</label><input type="password" id="confirmPw" placeholder="Repeat password"/></div>
+          <button class="btn btn-primary" onclick="changeAdminPw()">Update Password</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Version Modal -->
+<div class="modal" id="versionModal">
+  <div class="modal-card">
+    <h2>🚀 Publish New App Version</h2>
+    <div class="alert alert-error" id="verErr"></div>
+    <div class="alert alert-success" id="verSuccess"></div>
+    <div class="form-group"><label>Version Number *</label><input id="vVersion" placeholder="e.g. 1.1.0"/></div>
+    <div class="form-group"><label>Download URL *</label><input id="vUrl" placeholder="https://drive.google.com/... or GitHub release URL"/></div>
+    <div class="form-group"><label>File Size</label><input id="vSize" placeholder="e.g. 85 MB"/></div>
+    <div class="form-group"><label>Release Notes</label><textarea id="vNotes" rows="5" placeholder="What's new in this version..."></textarea></div>
+    <div class="form-group"><label style="display:flex;align-items:center;gap:8px"><input type="checkbox" id="vMandatory" style="width:auto"/> Force users to update (mandatory)</label></div>
+    <div class="flex gap-2 mt-2">
+      <button class="btn btn-primary" onclick="publishVersion()">🚀 Publish Version</button>
+      <button class="btn btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- User Detail Modal -->
+<div class="modal" id="userModal">
+  <div class="modal-card">
+    <h2 id="userModalTitle">User Details</h2>
+    <div id="userModalContent"></div>
+    <div class="flex gap-2 mt-2">
+      <button class="btn btn-success btn-sm" id="btnApprove" onclick="setStatus('approved')">✓ Approve</button>
+      <button class="btn btn-danger btn-sm" id="btnBan" onclick="setStatus('banned')">🚫 Ban</button>
+      <button class="btn btn-warning btn-sm" id="btnReject" onclick="setStatus('rejected')">✗ Reject</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let token = localStorage.getItem('adminToken');
+let currentUserId = null;
+
+function show(id){document.getElementById(id).style.display='flex'}
+function hide(id){document.getElementById(id).style.display='none'}
+function showAlert(id,msg){const el=document.getElementById(id);el.textContent=msg;el.style.display='block';setTimeout(()=>el.style.display='none',4000)}
+
+async function api(method,path,body){
+  const r=await fetch('/api'+path,{method,headers:{'Content-Type':'application/json','Authorization':'Bearer '+token},body:body?JSON.stringify(body):undefined});
+  return r.json();
+}
+
+async function adminLogin(){
+  const u=document.getElementById('adminUser').value;
+  const p=document.getElementById('adminPass').value;
+  if(!u||!p)return showAlert('loginErr','Enter username and password');
+  const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:u,password:p})});
+  const d=await r.json();
+  if(!d.success)return showAlert('loginErr',d.error||'Login failed');
+  token=d.token; localStorage.setItem('adminToken',token);
+  document.getElementById('loginPage').style.display='none';
+  document.getElementById('app').style.display='flex';
+  document.getElementById('adminUserLabel').textContent=d.username;
+  loadDashboard(); loadUsers(); loadVersions(); loadLogs();
+}
+
+function logout(){localStorage.removeItem('adminToken');location.reload()}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(el=>el.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  event.target.classList.add('active');
+}
+
+async function loadDashboard(){
+  const d=await api('GET','/admin/stats');
+  document.getElementById('st-total').textContent=d.users.total||0;
+  document.getElementById('st-approved').textContent=d.users.approved||0;
+  document.getElementById('st-pending').textContent=d.users.pending||0;
+  document.getElementById('st-banned').textContent=d.users.banned||0;
+  document.getElementById('st-today').textContent=d.todayLogins||0;
+  document.getElementById('st-week').textContent=d.activeThisWeek||0;
+  // Pending
+  const pending=d.recent?[]:[];
+  await loadPendingList('pendingList');
+  // Recent logs
+  const logEl=document.getElementById('recentLogs');
+  if(!d.recent||!d.recent.length){logEl.innerHTML='<div class="empty">No recent activity</div>';return;}
+  logEl.innerHTML=d.recent.slice(0,10).map(l=>`<div class="log-item"><span class="action">${l.action}</span> — ${l.details||''} <span class="time">${l.created_at}</span></div>`).join('');
+}
+
+async function loadPendingList(elId){
+  const d=await api('GET','/admin/users?status=pending&limit=50');
+  const el=document.getElementById(elId);
+  if(!d.users||!d.users.length){el.innerHTML='<div class="empty">✓ No pending approvals</div>';return;}
+  el.innerHTML=`<table><thead><tr><th>Name</th><th>Email</th><th>SRN</th><th>Firm</th><th>City</th><th>Registered</th><th>Actions</th></tr></thead><tbody>`+
+    d.users.map(u=>`<tr>
+      <td><strong>${u.name}</strong></td>
+      <td>${u.email}</td><td>${u.registration_no||'—'}</td>
+      <td>${u.firm_name||'—'}</td><td>${u.city||'—'}</td>
+      <td>${u.created_at?.slice(0,10)||'—'}</td>
+      <td class="flex gap-2">
+        <button class="btn btn-success btn-sm" onclick="quickStatus('${u.id}','approved')">✓ Approve</button>
+        <button class="btn btn-danger btn-sm" onclick="quickStatus('${u.id}','rejected')">✗ Reject</button>
+        <button class="btn btn-ghost btn-sm" onclick="openUserModal('${u.id}')">👁</button>
+      </td></tr>`).join('')+'</tbody></table>';
+}
+
+async function loadUsers(){
+  const d=await api('GET','/admin/users?limit=200');
+  renderUsersTable(d.users||[]);
+}
+
+async function searchUsers(){
+  const s=document.getElementById('searchInput').value;
+  const st=document.getElementById('statusFilter').value;
+  const d=await api('GET',`/admin/users?search=${encodeURIComponent(s)}&status=${st}&limit=200`);
+  renderUsersTable(d.users||[]);
+}
+
+function renderUsersTable(users){
+  const tb=document.getElementById('usersTable');
+  if(!users.length){tb.innerHTML='<tr><td colspan="8" class="empty">No users found</td></tr>';return;}
+  tb.innerHTML=users.map(u=>`<tr>
+    <td><div class="font-bold">${u.name}</div><div class="text-muted">${u.email}</div></td>
+    <td class="text-muted">${u.registration_no||'—'}</td>
+    <td>${u.firm_name||'—'}</td>
+    <td>${u.city||'—'}</td>
+    <td><span class="badge badge-${u.status}">${u.status.toUpperCase()}</span></td>
+    <td class="text-muted">${u.app_version||'—'}</td>
+    <td class="text-muted">${u.last_active?.slice(0,16)||'Never'}</td>
+    <td><div class="flex gap-2">
+      ${u.status!=='approved'?`<button class="btn btn-success btn-sm" onclick="quickStatus('${u.id}','approved')">✓</button>`:''}
+      ${u.status!=='banned'?`<button class="btn btn-danger btn-sm" onclick="quickStatus('${u.id}','banned')">🚫</button>`:''}
+      <button class="btn btn-ghost btn-sm" onclick="openUserModal('${u.id}')">👁</button>
+    </div></td>
+  </tr>`).join('');
+}
+
+async function quickStatus(id,status){
+  await api('PATCH',`/admin/users/${id}/status`,{status});
+  loadDashboard(); loadUsers(); loadPendingList('pendingFull');
+}
+
+async function bulkApprove(){
+  const d=await api('GET','/admin/users?status=pending&limit=500');
+  if(!d.users?.length)return alert('No pending users');
+  const ids=d.users.map(u=>u.id);
+  await api('PATCH','/admin/users/bulk/status',{ids,status:'approved'});
+  alert(`✓ ${ids.length} users approved!`);
+  loadDashboard(); loadUsers(); loadPendingList('pendingFull');
+}
+
+async function openUserModal(id){
+  currentUserId=id;
+  const d=await api('GET',`/admin/users/${id}`);
+  const u=d.user;
+  document.getElementById('userModalTitle').textContent=u.name;
+  document.getElementById('userModalContent').innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+      <div><div class="text-muted">Email</div><div>${u.email}</div></div>
+      <div><div class="text-muted">SRN</div><div>${u.registration_no||'—'}</div></div>
+      <div><div class="text-muted">Firm</div><div>${u.firm_name||'—'}</div></div>
+      <div><div class="text-muted">City</div><div>${u.city||'—'}</div></div>
+      <div><div class="text-muted">Status</div><div><span class="badge badge-${u.status}">${u.status.toUpperCase()}</span></div></div>
+      <div><div class="text-muted">App Version</div><div>${u.app_version||'—'}</div></div>
+      <div><div class="text-muted">First Login</div><div>${u.first_login?.slice(0,16)||'—'}</div></div>
+      <div><div class="text-muted">Last Active</div><div>${u.last_active?.slice(0,16)||'Never'}</div></div>
+      <div><div class="text-muted">Login Count</div><div>${u.login_count||0}</div></div>
+      <div><div class="text-muted">Platform</div><div>${u.platform||'—'}</div></div>
+    </div>
+    <div class="form-group"><label>Admin Notes</label>
+      <textarea id="userNotes" rows="3">${u.notes||''}</textarea>
+    </div>
+    <button class="btn btn-ghost btn-sm mb-4" onclick="saveNotes()">💾 Save Notes</button>
+    <div style="font-weight:700;margin-bottom:8px;color:#94a3b8">Recent Activity:</div>
+    ${(d.activityLogs||[]).slice(0,8).map(l=>`<div class="log-item"><span class="action">${l.action}</span> ${l.details||''} <span class="time">${l.created_at?.slice(0,16)}</span></div>`).join('')||'<div class="text-muted">No activity</div>'}
+  `;
+  document.getElementById('userModal').classList.add('open');
+}
+
+async function setStatus(status){
+  if(!currentUserId)return;
+  const notes=document.getElementById('userNotes')?.value||'';
+  await api('PATCH',`/admin/users/${currentUserId}/status`,{status,notes});
+  closeModal(); loadDashboard(); loadUsers();
+}
+
+async function saveNotes(){
+  const notes=document.getElementById('userNotes').value;
+  await api('PATCH',`/admin/users/${currentUserId}/notes`,{notes});
+  alert('Notes saved!');
+}
+
+async function loadVersions(){
+  const d=await api('GET','/admin/stats');
+  const tb=document.getElementById('versionsTable');
+  if(!d.versions?.length){tb.innerHTML='<tr><td colspan="7" class="empty">No versions</td></tr>';return;}
+  tb.innerHTML=d.versions.map(v=>`<tr>
+    <td><strong>v${v.version}</strong></td>
+    <td>${v.is_latest?'<span class="badge badge-approved">LATEST</span>':'<span class="badge badge-rejected">OLD</span>'}</td>
+    <td>${v.is_mandatory?'<span class="badge badge-pending">MANDATORY</span>':'Optional'}</td>
+    <td>${v.file_size||'—'}</td>
+    <td style="max-width:200px;white-space:pre-wrap;font-size:12px">${(v.release_notes||'').slice(0,100)}${v.release_notes?.length>100?'...':''}</td>
+    <td class="text-muted">${v.created_at?.slice(0,10)||'—'}</td>
+    <td><a href="${v.download_url}" target="_blank" class="btn btn-ghost btn-sm">↗ Link</a></td>
+  </tr>`).join('');
+}
+
+function openVersionModal(){document.getElementById('versionModal').classList.add('open')}
+function closeModal(){document.querySelectorAll('.modal').forEach(m=>m.classList.remove('open'));currentUserId=null;}
+
+async function publishVersion(){
+  const ver=document.getElementById('vVersion').value.trim();
+  const url=document.getElementById('vUrl').value.trim();
+  const notes=document.getElementById('vNotes').value.trim();
+  const size=document.getElementById('vSize').value.trim();
+  const mandatory=document.getElementById('vMandatory').checked;
+  if(!ver||!url)return showAlert('verErr','Version and download URL are required');
+  const d=await api('POST','/admin/versions',{version:ver,releaseNotes:notes,downloadUrl:url,isMandatory:mandatory,fileSize:size});
+  if(d.success){showAlert('verSuccess',`✓ Version v${ver} published! All users will see update notification.`);loadVersions();}
+  else showAlert('verErr',d.error||'Failed');
+}
+
+async function loadLogs(){
+  const d=await api('GET','/admin/logs?limit=100');
+  const tb=document.getElementById('logsTable');
+  if(!d.logs?.length){tb.innerHTML='<tr><td colspan="5" class="empty">No logs</td></tr>';return;}
+  tb.innerHTML=d.logs.map(l=>`<tr>
+    <td class="text-muted">${l.created_at?.slice(0,16)||'—'}</td>
+    <td><div>${l.name||'—'}</div><div class="text-muted">${l.email||'—'}</div></td>
+    <td><span class="action" style="color:#60a5fa;font-weight:700">${l.action}</span></td>
+    <td class="text-muted" style="max-width:200px">${l.details?.slice(0,80)||'—'}</td>
+    <td class="text-muted">${l.ip_address||'—'}</td>
+  </tr>`).join('');
+}
+
+async function changeAdminPw(){
+  const n=document.getElementById('newPw').value;
+  const c=document.getElementById('confirmPw').value;
+  if(!n||n.length<8)return showAlert('pwError','Password must be at least 8 characters');
+  if(n!==c)return showAlert('pwError','Passwords do not match');
+  const d=await api('POST','/admin/change-password',{newPassword:n});
+  if(d.success)showAlert('pwSuccess','✓ Password updated successfully!');
+  else showAlert('pwError',d.error||'Failed');
+}
+
+// Auto-init if token exists
+if(token){
+  fetch('/api/admin/stats',{headers:{'Authorization':'Bearer '+token}})
+    .then(r=>r.json()).then(d=>{
+      if(d.users){
+        document.getElementById('loginPage').style.display='none';
+        document.getElementById('app').style.display='flex';
+        loadDashboard(); loadUsers(); loadVersions(); loadLogs();
+      } else { localStorage.removeItem('adminToken'); token=null; }
+    }).catch(()=>{ localStorage.removeItem('adminToken'); token=null; });
+}
+</script>
+</body>
+</html>
